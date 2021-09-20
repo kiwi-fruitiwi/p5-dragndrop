@@ -39,37 +39,89 @@ function mouseReleased() {
     rectangles.forEach(r => r.notPressed())
 }
 
+function mouseMoved() {
+    /*
+      we can check if we're mousing over any rectangle here
+      on mouseMoved(), check contains foreach r in rectangles
+        if contains:
+            set hover to true
+        else set hover to false
+
+      in show(), fill transparent if hover is true
+     */
+
+    rectangles.forEach(r => {
+        if (r.contains(mouseX, mouseY)) {
+            r.hovering = true
+        } else r.hovering = false
+    })
+
+}
+
+/**
+ This rectangle handles drag and drop. Whenever the mouse clicks within the
+ rectangle's bounding box, an offset vector is created. It points from
+ the rectangle's top left point (rectMode(CORNER)) to our mouseX,
+ mouseY point.
+
+ When dragging, we use this offset to calculate how the rectangle's show
+ method displays it.
+ */
 class Rectangle {
     constructor(x, y, w, h) {
         this.x = x
         this.y = y
         this.w = w
         this.h = h
+
+        // offsets help us calculate where to display our rectangle while
+        // we're dragging it, since our mouse coordinates constantly update.
+        // We want the difference vector between the top left point of our
+        // rectangle and the point where our mouse clicked to start dragging
         this.offsetX = 0
         this.offsetY = 0
         this.dragging = false
+
+        this.hovering = false
     }
 
-    show(px, py) {
+    // px and py refer to pointer_x and pointer_y, the coordinates of the
+    // mouse dragging
+    show(mx, my) {
         if (this.dragging) {
-            this.x = px + this.offsetX
-            this.y = py + this.offsetY
+            this.x = mx - this.offsetX
+            this.y = my - this.offsetY
+        }
+
+        if (this.hovering) {
+            fill(0, 0, 100, 20)
+        } else {
+            noFill()
         }
 
         stroke(0, 0, 100) // white
-        noFill()
-        rect(this.x, this.y, this.w, this.h)
+        rect(this.x, this.y, this.w, this.h, 3)
     }
 
-    pressed(px, py) {
-        if (px > this.x && px < this.x + this.w && py > this.y && py < this.y + this.h) {
+    pressed(mx, my) {
+        // this is a contains check. Is the mouse at (mx, my) within the
+        // boundary of our rectangle?
+        if (this.contains(mx, my)) {
             this.dragging = true
-            this.offsetX = this.x - px
-            this.offsetY = this.y - py
+            this.offsetX = mx - this.x
+            this.offsetY = my - this.y
         }
     }
 
-    notPressed(px, py) {
+    notPressed(mx, my) {
         this.dragging = false
+    }
+
+    // returns true if our rectangle contains a point (x,y), non-inclusive
+    contains(x, y) {
+        return (x > this.x &&
+            x < this.x + this.w &&
+            y > this.y &&
+            y < this.y + this.h)
     }
 }
