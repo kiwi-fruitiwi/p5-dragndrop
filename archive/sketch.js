@@ -4,6 +4,9 @@
 
 Exploring drag and drop with code from
 	https://editor.p5js.org/enickles/sketches/H1n19TObz
+
+🐞: rectangles don't highlight on mouseover when dragging
+
  */
 let font
 let rectangles
@@ -51,11 +54,10 @@ function mouseMoved() {
      */
 
     rectangles.forEach(r => {
-        if (r.contains(mouseX, mouseY)) {
+        if (r.contains(mouseX, mouseY))
             r.hovering = true
-        } else r.hovering = false
+        else r.hovering = false
     })
-
 }
 
 /**
@@ -81,7 +83,6 @@ class Rectangle {
         this.offsetX = 0
         this.offsetY = 0
         this.dragging = false
-
         this.hovering = false
     }
 
